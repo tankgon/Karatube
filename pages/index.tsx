@@ -16,9 +16,7 @@ const ListSingerGrid = dynamic(() => import("../components/ListSingerGrid"), {
 const ListTopicsGrid = dynamic(() => import("../components/ListTopicsGrid"), {
   loading: () => <div>Loading...</div>,
 });
-const ListDriveGrid = dynamic(() => import("../components/ListDriveGrid"), {
-  loading: () => <div>Loading...</div>,
-});
+const ListDriveGrid = dynamic(() => import("../components/ListDriveGrid"));
 
 function HomePage() {
   const {
@@ -28,12 +26,14 @@ function HomePage() {
     isKaraoke,
     activeIndex,
     drivePlaylist,
+    curVideo,
     setPlaylist,
     setCurVideoId,
     setSearchTerm,
     setIsKaraoke,
     setActiveIndex,
     setDrivePlaylist,
+    setCurVideo,
   } = useKaraokeState();
 
   const [selectedVideo, setSelectedVideo] = useState<
@@ -45,6 +45,7 @@ function HomePage() {
       // playing first video
       const [video, ...newPlaylist] = playlist;
       setCurVideoId(video.videoId);
+      setCurVideo(video);
       // then remove it from playlist
       setPlaylist(newPlaylist);
     }
@@ -54,11 +55,9 @@ function HomePage() {
     setPlaylist(playlist?.concat([{ key: new Date().getTime(), ...video }]));
   }
 
-  function addVideoToPlaylistDrive(video: SearchResult | RecommendedVideo) {
-    if (!curVideoId) setCurVideoId(video.videoId);
-
+  function addVideoToPlaylistDrive(video: any) {
     drivePlaylist.findIndex(
-      (indexYoutube) => indexYoutube?.videoId === video.videoId
+      (indexYoutube) => indexYoutube?.videoId === video?.videoId
     ) !== -1
       ? null
       : setDrivePlaylist(
@@ -206,7 +205,10 @@ function HomePage() {
                     />,
                     <ListSingerGrid key={1} />,
                     <ListTopicsGrid key={2} />,
-                    <ListDriveGrid key={3} />,
+                    <ListDriveGrid
+                      key={3}
+                      onClick={(video) => setSelectedVideo(video)}
+                    />,
                   ][activeIndex]
                 }
                 {/* END Video Row Item */}
@@ -290,8 +292,7 @@ function HomePage() {
             <YoutubePlayer
               videoId={curVideoId}
               addVIdeoDrive={() => {
-                // priorityVideoDrive(selectedVideo)
-                addVideoToPlaylistDrive(selectedVideo);
+                addVideoToPlaylistDrive(curVideo);
               }}
               nextSong={() => setCurVideoId("")}
               className="flex flex-col flex-1 sm:flex-grow-0"

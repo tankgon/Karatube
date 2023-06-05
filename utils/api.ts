@@ -1,6 +1,6 @@
 import axios from "axios";
 import { GetArtists, GetTopics } from "../types";
-import { SearchResult, VideoResponse } from "../types/invidious";
+import { SearchResult, VideoResponse, VideoTrending } from "../types/invidious";
 
 const invidious = axios.create({
   baseURL: "https://invidious.io.lol/",
@@ -42,3 +42,10 @@ export const getTopics = async () => {
   const res = await axios.get<GetTopics>("/api/topics");
   return res.data;
 };
+
+// export const getVideoTrending = async () => {
+//   const res = await invidious.get<VideoTrending>("/api/v1/trending");
+//   console.log("thanh", res.data);
+//   return res.data;
+// };
+// getVideoTrending()

@@ -27,7 +27,6 @@ export default function SearchResultGrid({
         if (isKaraoke) {
           return recommendedVideos.filter(titleIncludesKaraoke);
         }
-
         return recommendedVideos;
       },
     }

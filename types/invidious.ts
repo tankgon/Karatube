@@ -131,3 +131,21 @@ export interface SearchResult {
   premium: boolean;
   isUpcoming: boolean;
 }
+
+export interface VideoTrending {
+  title: string;
+  videoId: string;
+  videoThumbnails: VideoThumbnail[];
+  lengthSeconds: number;
+  viewCount: number;
+  author: string;
+  authorId: string;
+  authorUrl: string;
+  published: number;
+  publishedText: string;
+  description: string;
+  descriptionHtml: string;
+  liveNow: boolean;
+  premium: boolean;
+  paid: boolean;
+}
