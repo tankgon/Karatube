@@ -16,6 +16,9 @@ const ListSingerGrid = dynamic(() => import("../components/ListSingerGrid"), {
 const ListTopicsGrid = dynamic(() => import("../components/ListTopicsGrid"), {
   loading: () => <div>Loading...</div>,
 });
+const ListDriveGrid = dynamic(() => import("../components/ListDriveGrid"), {
+  loading: () => <div>Loading...</div>,
+});
 
 function HomePage() {
   const {
@@ -24,11 +27,13 @@ function HomePage() {
     searchTerm,
     isKaraoke,
     activeIndex,
+    drivePlaylist,
     setPlaylist,
     setCurVideoId,
     setSearchTerm,
     setIsKaraoke,
     setActiveIndex,
+    setDrivePlaylist,
   } = useKaraokeState();
 
   const [selectedVideo, setSelectedVideo] = useState<
@@ -47,6 +52,18 @@ function HomePage() {
 
   function addVideoToPlaylist(video: SearchResult | RecommendedVideo) {
     setPlaylist(playlist?.concat([{ key: new Date().getTime(), ...video }]));
+  }
+
+  function addVideoToPlaylistDrive(video: SearchResult | RecommendedVideo) {
+    if (!curVideoId) setCurVideoId(video.videoId);
+
+    drivePlaylist.findIndex(
+      (indexYoutube) => indexYoutube?.videoId === video.videoId
+    ) !== -1
+      ? null
+      : setDrivePlaylist(
+          drivePlaylist?.concat([{ key: new Date().getTime(), ...video }])
+        );
   }
 
   function priorityVideo(
@@ -181,7 +198,6 @@ function HomePage() {
                 className={`relative grid grid-cols-2 xl:grid-cols-3 auto-rows-min gap-2 w-full overflow-y-auto max-h-full p-2 ${scrollbarCls}`}
               >
                 {/* START Video Row Item */}
-
                 {
                   [
                     <SearchResultGrid
@@ -190,9 +206,9 @@ function HomePage() {
                     />,
                     <ListSingerGrid key={1} />,
                     <ListTopicsGrid key={2} />,
+                    <ListDriveGrid key={3} />,
                   ][activeIndex]
                 }
-
                 {/* END Video Row Item */}
               </div>
               {/* Put this part before </body> tag */}
@@ -246,7 +262,9 @@ function HomePage() {
                         <label
                           htmlFor="modal-video"
                           className="btn btn-primary flex-1 2xl:text-2xl"
-                          onClick={() => addVideoToPlaylist(selectedVideo)}
+                          onClick={() => {
+                            addVideoToPlaylist(selectedVideo);
+                          }}
                         >
                           Chọn
                         </label>
@@ -271,6 +289,10 @@ function HomePage() {
           <div className="relative order-1 sm:order-2 w-full flex flex-row sm:flex-col flex-grow flex-shrink-0 sm:max-w-[50vw] lg:max-w-[50vw] 2xl:max-w-[50vw] sm:min-w-[400px] sm:h-screen overflow-hidden">
             <YoutubePlayer
               videoId={curVideoId}
+              addVIdeoDrive={() => {
+                // priorityVideoDrive(selectedVideo)
+                addVideoToPlaylistDrive(selectedVideo);
+              }}
               nextSong={() => setCurVideoId("")}
               className="flex flex-col flex-1 sm:flex-grow-0"
             />

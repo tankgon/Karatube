@@ -41,7 +41,6 @@ export default function SearchResultGrid({
         if (isKaraoke) {
           return results.filter(titleIncludesKaraoke);
         }
-
         return results;
       },
     }
@@ -51,7 +50,7 @@ export default function SearchResultGrid({
     searchTerm || !recommendedVideos?.length
       ? searchResults
       : recommendedVideos;
-
+      
   return (
     <>
       {isLoading && (

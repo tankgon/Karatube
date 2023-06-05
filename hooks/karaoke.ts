@@ -5,6 +5,10 @@ export function useKaraokeState() {
     "playlist",
     { defaultValue: [] }
   );
+  const { value: drivePlaylist, set: setDrivePlaylist } = useLocalStorageValue(
+    "drivePlaylist",
+    { defaultValue: [] }
+  );
   const { value: curVideoId, set: setCurVideoId } = useLocalStorageValue(
     "videoId",
     { defaultValue: "" }
@@ -29,10 +33,12 @@ export function useKaraokeState() {
     searchTerm,
     isKaraoke,
     activeIndex,
+    drivePlaylist,
     setPlaylist,
     setCurVideoId,
     setSearchTerm,
     setIsKaraoke,
     setActiveIndex,
+    setDrivePlaylist,
   };
 }

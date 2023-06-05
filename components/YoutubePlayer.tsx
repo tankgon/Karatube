@@ -5,13 +5,21 @@ import {
   PlayIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFullscreen, usePromise, useToggle } from "react-use";
 import YouTube, { YouTubePlayer } from "react-youtube";
 
-function YoutubePlayer({ videoId, nextSong, className = "", extra = null }) {
+function YoutubePlayer({
+  videoId,
+  addVIdeoDrive,
+  nextSong,
+  className = "",
+  extra = null,
+}) {
   const playerRef = useRef<YouTube>();
   const fullscreenRef = useRef<HTMLDivElement>();
   const [show, toggleFullscreen] = useToggle(false);
@@ -21,6 +29,7 @@ function YoutubePlayer({ videoId, nextSong, className = "", extra = null }) {
   const [playerState, setPlayerState] = useState<number>();
 
   const [isMuted, setIsMuted] = useState(false);
+
   const mounted = usePromise();
 
   async function updatePlayerState(player: YouTubePlayer) {
@@ -64,6 +73,7 @@ function YoutubePlayer({ videoId, nextSong, className = "", extra = null }) {
                 if (!player) return;
                 setPlayerState(await player?.getPlayerState());
                 await player?.playVideo();
+                
               } catch (error) {
                 console.log(error);
               }
@@ -72,6 +82,7 @@ function YoutubePlayer({ videoId, nextSong, className = "", extra = null }) {
     ],
     [playerState]
   );
+
   const muteBtn = useMemo(
     () => [
       !isMuted
@@ -116,12 +127,46 @@ function YoutubePlayer({ videoId, nextSong, className = "", extra = null }) {
       },
       {
         icon: ArrowUturnLeftIcon,
-        label: "Hát lại",
+        label: "Hát lại",
         onClick: async () => {
           try {
             const player = playerRef.current?.getInternalPlayer();
             if (!player) return;
             await player.seekTo(0, true);
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      },
+    ],
+    [nextSong]
+  );
+
+  const adjustTimeBtns = useMemo(
+    () => [
+      {
+        icon: ChevronDoubleLeftIcon,
+        label: "Tua lại",
+        onClick: async () => {
+          try {
+            const player = playerRef.current?.getInternalPlayer();
+            const currentTime = await player.getCurrentTime();
+            if (!player) return;
+            await player.seekTo(currentTime - 3, true);
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      },
+      {
+        icon: ChevronDoubleRightIcon,
+        label: "Tua",
+        onClick: async () => {
+          try {
+            const player = playerRef.current?.getInternalPlayer();
+            const currentTime = await player.getCurrentTime();
+            if (!player) return;
+            await player.seekTo(currentTime + 3, true);
           } catch (error) {
             console.log(error);
           }
@@ -174,12 +219,13 @@ function YoutubePlayer({ videoId, nextSong, className = "", extra = null }) {
               },
             }}
             onStateChange={(ev) => updatePlayerState(ev.target)}
+            onPlay={addVIdeoDrive}
             onEnd={nextSong}
           />
         )}
       </div>
       <div className="flex-shrink-0 flex flex-row md:w-full p-1 items-center">
-        {playPauseBtn.concat(playerBtns, muteBtn).map((btn) => (
+        {playPauseBtn.concat(playerBtns, muteBtn, adjustTimeBtns).map((btn) => (
           <button
             key={btn.label}
             className="btn btn-ghost text-primary flex h-auto flex-col flex-1 overflow-hidden text-[10px] 2xl:text-lg p-0 hover:bg-base-200"
