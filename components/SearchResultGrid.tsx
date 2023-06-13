@@ -11,7 +11,8 @@ export default function SearchResultGrid({
   onClick?: (video: SearchResult | RecommendedVideo) => void;
 }) {
   const { searchTerm, curVideoId, isKaraoke } = useKaraokeState();
-  const prefix = isKaraoke ? '"karaoke" ' : "";
+  const singerRecommend: string = "ha anh tuan";
+  const prefix = isKaraoke ? `karaoke ${singerRecommend}` : singerRecommend;
 
   const titleIncludesKaraoke = ({ title }) => {
     const lcTitle = title.toLowerCase();
@@ -49,7 +50,9 @@ export default function SearchResultGrid({
     searchTerm || !recommendedVideos?.length
       ? searchResults
       : recommendedVideos;
-      
+
+  console.log(searchResults);
+
   return (
     <>
       {isLoading && (
